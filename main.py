@@ -27,7 +27,7 @@ st.markdown("""""", unsafe_allow_html=True)
 st.markdown(
     """
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: Green;">
-    <a class="navbar-brand" href="#" target="_blank" style="padding-left: 30px;">EaseCHAOS</a>
+    <a class="navbar-brand" href="#" style="padding-left: 30px;">EaseCHAOS</a>
     </nav>
 """,
     unsafe_allow_html=True,
@@ -45,7 +45,7 @@ hide_streamlit_style = """
 
             </style>
             """
-# st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 #st.header(f"EaseCHAOS")
 
