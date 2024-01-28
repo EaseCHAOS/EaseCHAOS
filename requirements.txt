@@ -45,7 +45,7 @@ pydeck==0.8.1b0
 Pygments==2.17.2
 python-dateutil==2.8.2
 pytz==2023.3.post1
-pywin32==306
+# pywin32==306
 pyzmq==25.1.2
 referencing==0.32.1
 regex==2023.12.25
