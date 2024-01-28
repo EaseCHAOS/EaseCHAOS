@@ -1,14 +1,17 @@
-from extract.extract_table import get_time_table
-from extract.utils import save_to_excel
-import streamlit as st
-import pandas as pd
+import os
 import io
 import base64
 
+import pandas as pd
+
+from extract.extract_table import get_time_table
+import streamlit as st
 
 
-# el_table = get_time_table("data/D3.xlsx", "RP 3")
-# save_to_excel(el_table, "RP_3.xlsx")
+@st.cache_data()
+def catched_get_table(*args, **kwargs):
+    return get_time_table(*args, **kwargs)
+
 
 st.set_page_config(layout="wide")
 
@@ -44,53 +47,81 @@ hide_streamlit_style = """
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-
 st.header(f"EaseCHAOS")
 
-col1, col2 = st.columns(2)
+upload_source = st.toggle('Upload a general timetable')
 
-with col1:
-    classes = ['EL 1', 'EL 2', 'EL 3', 'CE 1', 'CE2']
-    classes = [''] + classes
-    class_option = st.selectbox('Pick Class', classes,) 
-      
+file_col, class_col = st.columns((2, 3))
 
-with col2:
-    col3, col4 = st.columns(2)
-    with col3:
-        upload = st.checkbox('Upload A Timetable')
-        if upload:
-            uploaded_file = st.file_uploader("Upload a Draft", type=['xlsx'])
-            if uploaded_file is not None:
-                df = pd.read_excel(uploaded_file)
-                df.to_excel('data/Draft.xlsx', index=False)
-    
-    with col4:
-        not_upload = st.checkbox('Extract Class Timetable')
-        if not_upload:
-            drafts = ['Draft 1', 'Draft 2', 'Draft 3']
-            drafts = [''] + drafts
-            draft_option = st.selectbox('Pick Draft', drafts)
+with file_col:
+    if upload_source:
+        raw_file = st.file_uploader("Upload a general timetable", type=['xlsx'])
+    else:
+        existing_drafts = os.listdir('existing_drafts')
+        raw_file = st.selectbox('Pick a general timetable', existing_drafts)
+        raw_file = 'existing_drafts/' + raw_file
 
-            if class_option and draft_option:
-                table = get_time_table(f"data/{draft_option}.xlsx", class_option)
-                save_to_excel(table, f"output/{class_option}.xlsx")
+with class_col:
+    programs = ['Choose a program', 'EL', 'CE', 'RP', 'ME', 'MC', 'SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES']
+    levels = ['Choose a level', '100', '200', '300', '400']
 
-                towrite = io.BytesIO()
-                downloaded_file = table.to_excel(towrite, index=True, header=True)
-                towrite.seek(0)
-                b64 = base64.b64encode(towrite.read()).decode()  
-                href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}">Download excel file</a> '
-                st.markdown(href, unsafe_allow_html=True)
-            else:
-                pass
-            
-try:                
-    if class_option and draft_option:
-        st.dataframe(table)
-except NameError:
-    pass
+    program_col, level_col = st.columns(2)
+    with program_col:
+        program = st.selectbox('Pick a program', programs)
+    with level_col:
+        level = st.selectbox('Pick a level', levels)
 
+if program == 'Choose a program':
+    st.info('Please select a program')
+    st.stop()
+if level == 'Choose a level':
+    st.info('Please select a level')
+    st.stop()
+if raw_file is None:
+    st.info('Please upload a general timetable')
+    st.stop()
+
+class_to_extract_for = program + ' ' + level[0]
+try:
+    table = catched_get_table(raw_file, class_to_extract_for)
+    table_in_memory = io.BytesIO()
+
+    st.title(f"{class_to_extract_for} time table")
+    html_table = table.to_html().replace("\\n","<br>").replace("NaN", "")
+    html_table = '<style>td {word-wrap: break-word; width: 600px;}</style>' + html_table
+    st.write(html_table, unsafe_allow_html=True)
+
+    with pd.ExcelWriter(table_in_memory, engine='xlsxwriter') as writer:
+        workbook = writer.book
+        if class_to_extract_for not in workbook.sheetnames:
+            workbook.add_worksheet(class_to_extract_for)
+        worksheet = writer.sheets[class_to_extract_for]
+
+        wrap_format = workbook.add_format({'text_wrap': True, 'align': 'center'})
+        worksheet.set_column('A:XFD', 30, wrap_format)
+
+        for row in range(table.shape[0] + 1):
+            worksheet.set_row(row, 60)
+
+        table.to_excel(writer, index=True, header=True, sheet_name=class_to_extract_for)
+
+    b64 = base64.b64encode(table_in_memory.getvalue()).decode()
+    href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="{class_to_extract_for}_timetable.xlsx">Download {class_to_extract_for} timetable</a>'
+    st.write()
+    st.markdown(href, unsafe_allow_html=True)
+
+except Exception as e:
+    st.error(f"An error occurred: {e}")
+    if upload_source:
+        st.info('Please be sure the uploaded file is a valid excel file in the format of the general timetable! \n Contact the developers if the error persist.')
+    st.stop()
     
 with st.expander('About'):
-    st.write('about here')
+    info = """
+    - This app extracts the time table for a particular class for all days.
+    - You can upload a general timetable or pick a general timetable from the dropdown.
+    - After which, choose a program and level. The app will then extract the time table for you.
+    - You can download the time table as an excel file.
+    - If you have any questions, please contact the developers at [our contacts].
+    """
+    st.markdown(info)
