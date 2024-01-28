@@ -47,7 +47,7 @@ hide_streamlit_style = """
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-st.header(f"EaseCHAOS")
+#st.header(f"EaseCHAOS")
 
 upload_source = st.toggle('Upload a general timetable')
 
