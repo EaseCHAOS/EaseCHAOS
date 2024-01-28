@@ -122,6 +122,6 @@ with st.expander('About'):
     - You can upload a general timetable or pick a general timetable from the dropdown.
     - After which, choose a program and level. The app will then extract the time table for you.
     - You can download the time table as an excel file.
-    - If you have any questions, please contact the developers at [our contacts].
+    - If you have any questions, please contact the developers at neilohene@gmail.com | kekelidompeh@gmail.com | aarononto909@gmail.com.
     """
     st.markdown(info)
