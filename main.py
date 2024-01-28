@@ -104,10 +104,27 @@ try:
         wrap_format = workbook.add_format({'text_wrap': True, 'align': 'center'})
         worksheet.set_column('A:XFD', 30, wrap_format)
 
-        for row in range(table.shape[0] + 1):
+        for row in range(table.shape[0]):
             worksheet.set_row(row, 60)
 
+            for col in range(table.shape[1] - 1):  # -1 is moved here to avoid checking inside the loop
+                cell_value = str(table.iloc[row, col]).strip()
+                next_cell_value = str(table.iloc[row, col + 1]).strip()
+
+                if cell_value == next_cell_value and cell_value != "nan":
+                    worksheet.merge_range(
+                        row + 1,
+                        col + 1,
+                        row + 1,
+                        col + 2,
+                        cell_value,
+                        wrap_format,
+                    )
+        worksheet.set_row(table.shape[0], 65)
+
         table.to_excel(writer, index=True, header=True, sheet_name=class_to_extract_for)
+
+    
 
     b64 = base64.b64encode(table_in_memory.getvalue()).decode()
     href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="{class_to_extract_for}_timetable.xlsx">Download {class_to_extract_for} timetable</a>'

@@ -24,6 +24,7 @@ def save_to_excel(df: pd.DataFrame, filename: str) -> None:
 
     worksheet.set_column("A:XFD", 30, wrap_format)
 
+    
     for row in range(df.shape[0]):
         worksheet.set_row(row, 60)
 
