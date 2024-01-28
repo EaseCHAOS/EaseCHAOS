@@ -1,6 +1,73 @@
 from extract.extract_table import get_time_table
 from extract.utils import save_to_excel
+import streamlit as st
+import pandas as pd
+import io
+import base64
 
 
-el_table = get_time_table("../data/data1.xlsx", "CE 1")
-save_to_excel(el_table, "CE_1.xlsx")
+# el_table = get_time_table("data/D3.xlsx", "RP 3")
+# save_to_excel(el_table, "RP_3.xlsx")
+
+st.set_page_config(layout="wide")
+
+st.markdown(
+    '<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.css" rel="stylesheet">',
+    unsafe_allow_html=True,
+)
+st.markdown(
+    '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">',
+    unsafe_allow_html=True,
+)
+st.markdown("""""", unsafe_allow_html=True)
+st.markdown(
+    """
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: Green;">
+    <a class="navbar-brand" href="#" target="_blank" style="padding-left: 30px;">EaseCHAOS</a>
+    </nav>
+""",
+    unsafe_allow_html=True,
+)
+hide_streamlit_style = """
+            <style>
+    
+                header{visibility:hidden;}
+                .main {
+                    margin-top: -120px;
+                    padding-top:10px;
+                }
+                #MainMenu {visibility: hidden;}
+                footer {visibility: hidden;}
+
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
+
+st.header(f"EaseCHAOS")
+
+uploaded_file = st.file_uploader("Upload a Draft", type=['xlsx'])
+
+if uploaded_file is not None:
+    df = pd.read_excel(uploaded_file)
+
+    df.to_excel('data/Draft.xlsx', index=False)
+    
+draft = st.text_input("Type in draft(Draft 1)")
+classs = st.text_input("Enter your class(Eg: EL 1)")
+
+
+if draft and classs: 
+    table = get_time_table(f"data/{draft}.xlsx", classs)
+    save_to_excel(table, f"output/{classs}.xlsx")
+
+    towrite = io.BytesIO()
+    downloaded_file = table.to_excel(towrite, index=True, header=True)
+    towrite.seek(0)
+    b64 = base64.b64encode(towrite.read()).decode()  
+    href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}">Download excel file</a> '
+    st.markdown(href, unsafe_allow_html=True)
+
+with st.expander('About'):
+    st.write('about here')
+
