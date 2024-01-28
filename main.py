@@ -62,7 +62,7 @@ with file_col:
         raw_file = 'existing_drafts/' + raw_file
 
 with class_col:
-    programs = ['Choose a program', 'EL', 'CE', 'RP', 'ME', 'MC', 'SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES']
+    programs = ['Choose a program', 'EL', 'CE', 'RP', 'ME', 'MA', 'PG', 'NG', 'LT', 'LA', 'MC','SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES', 'PE', 'IS', 'CH', 'EC']
     levels = ['Choose a level', '100', '200', '300', '400']
 
     program_col, level_col = st.columns(2)
@@ -88,7 +88,6 @@ try:
 
     st.title(f"{class_to_extract_for} time table")
     html_table = table.to_html().replace("\\n","<br>").replace("NaN", "")
-    html_table = '<style>td {word-wrap: break-word; width: 600px;}</style>' + html_table
     st.write(html_table, unsafe_allow_html=True)
 
     with pd.ExcelWriter(table_in_memory, engine='xlsxwriter') as writer:
