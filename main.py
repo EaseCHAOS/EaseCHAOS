@@ -46,28 +46,48 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 st.header(f"EaseCHAOS")
 
-uploaded_file = st.file_uploader("Upload a Draft", type=['xlsx'])
+col1, col2 = st.columns(2)
 
-if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file)
+with col1:
+    classes = ('EL 1', 'EL 2', 'EL 3', 'CE 1', 'CE2')
+    class_option = st.selectbox('Pick Class', classes,) 
+      
 
-    df.to_excel('data/Draft.xlsx', index=False)
+with col2:
+    col3, col4 = st.columns(2)
+    with col3:
+        upload = st.checkbox('Upload A Timetable')
+        if upload:
+            uploaded_file = st.file_uploader("Upload a Draft", type=['xlsx'])
+            if uploaded_file is not None:
+                df = pd.read_excel(uploaded_file)
+                df.to_excel('data/Draft.xlsx', index=False)
     
-draft = st.text_input("Type in draft(Draft 1)")
-classs = st.text_input("Enter your class(Eg: EL 1)")
+    with col4:
+        not_upload = st.checkbox('Extract Class Timetable')
+        if not_upload:
+            drafts = ('Draft 1', 'Draft 2', 'Draft 3')
+            draft_option = st.selectbox('Pick Draft', drafts)
 
+            if class_option and draft_option:
+                table = get_time_table(f"data/{draft_option}.xlsx", class_option)
+                save_to_excel(table, f"output/{class_option}.xlsx")
 
-if draft and classs: 
-    table = get_time_table(f"data/{draft}.xlsx", classs)
-    save_to_excel(table, f"output/{classs}.xlsx")
+                towrite = io.BytesIO()
+                downloaded_file = table.to_excel(towrite, index=True, header=True)
+                towrite.seek(0)
+                b64 = base64.b64encode(towrite.read()).decode()  
+                href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}">Download excel file</a> '
+                st.markdown(href, unsafe_allow_html=True)
+            else:
+                pass
+                
+if class_option and draft_option:
+    st.dataframe(table)
+else:
+    pass
 
-    towrite = io.BytesIO()
-    downloaded_file = table.to_excel(towrite, index=True, header=True)
-    towrite.seek(0)
-    b64 = base64.b64encode(towrite.read()).decode()  
-    href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}">Download excel file</a> '
-    st.markdown(href, unsafe_allow_html=True)
-
+    
 with st.expander('About'):
     st.write('about here')
 
