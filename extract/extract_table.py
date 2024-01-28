@@ -103,7 +103,7 @@ def get_time_table(filname: str, class_pattern: str) -> pd.DataFrame:
             available_classes = classes.dropna()
             if available_classes.any():
                 classrooms = classes[classes.notna()].index
-                available_classes = [c.replace("\n", " ") for c in available_classes.values]
+                available_classes = [re.sub(r'\s+', ' ', c.strip()) for c in available_classes.values]
                 available_classes = [f"{c} ({classrooms[i]})" for i, c in enumerate(available_classes)]
                 available_classes = '\n'.join(available_classes)
                 final_df.loc[day, period] = available_classes
