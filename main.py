@@ -1,12 +1,6 @@
-import pandas as pd
-import numpy as np
+from extract.extract_table import get_time_table
+from extract.utils import save_to_excel
 
 
-class TimeTableExtractor:
-    def __init__(self, timetable):
-        self.timetable = pd.DataFrame(timetable)
-
-    def extract(self, criteria):
-        # Implementation goes here
-    
-        pass
+el_table = get_time_table("data/data1.xlsx", "EL 3")
+save_to_excel(el_table, "EL_3.xlsx")
