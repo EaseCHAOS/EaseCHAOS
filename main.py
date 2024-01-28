@@ -28,7 +28,7 @@ st.markdown("""""", unsafe_allow_html=True)
 st.markdown(
     """
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark" style="background-color: Green;">
-    <a class="navbar-brand" href="#" target="_blank" style="padding-left: 30px;">EaseCHAOS</a>
+    <a class="navbar-brand" href="#" style="padding-left: 30px;">EaseCHAOS</a>
     </nav>
 """,
     unsafe_allow_html=True,
@@ -63,7 +63,7 @@ with file_col:
         raw_file = 'existing_drafts/' + raw_file
 
 with class_col:
-    programs = ['Choose a program', 'EL', 'CE', 'RP', 'MC', 'SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES', 'MR']
+    programs = ['Choose a program', 'EL', 'CE', 'RP', 'ME', 'MA', 'PG', 'NG', 'LT', 'LA', 'MC','SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES', 'PE', 'IS', 'CH', 'EC']
     levels = ['Choose a level', '100', '200', '300', '400']
 
     program_col, level_col = st.columns(2)
