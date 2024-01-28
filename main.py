@@ -7,6 +7,7 @@ import pandas as pd
 from extract.extract_table import get_time_table
 import streamlit as st
 
+from streamlit_js_eval import streamlit_js_eval
 
 @st.cache_data()
 def catched_get_table(*args, **kwargs):
@@ -62,7 +63,7 @@ with file_col:
         raw_file = 'existing_drafts/' + raw_file
 
 with class_col:
-    programs = ['Choose a program', 'EL', 'CE', 'RP', 'ME', 'MC', 'SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES']
+    programs = ['Choose a program', 'EL', 'CE', 'RP', 'MC', 'SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES', 'MR']
     levels = ['Choose a level', '100', '200', '300', '400']
 
     program_col, level_col = st.columns(2)
@@ -87,9 +88,12 @@ try:
     table_in_memory = io.BytesIO()
 
     st.title(f"{class_to_extract_for} time table")
-    html_table = table.to_html().replace("\\n","<br>").replace("NaN", "")
-    html_table = '<style>td {word-wrap: break-word; width: 600px;}</style>' + html_table
-    st.write(html_table, unsafe_allow_html=True)
+    if streamlit_js_eval(js_expressions='screen.width', key = 'SCR') > 768:
+        html_table = table.to_html().replace("\\n","<br>").replace("NaN", "")
+        st.write(html_table, unsafe_allow_html=True)
+    else:
+        st.dataframe(table)
+
 
     with pd.ExcelWriter(table_in_memory, engine='xlsxwriter') as writer:
         workbook = writer.book
