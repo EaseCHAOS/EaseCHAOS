@@ -6,6 +6,7 @@ import io
 import base64
 
 
+
 # el_table = get_time_table("data/D3.xlsx", "RP 3")
 # save_to_excel(el_table, "RP_3.xlsx")
 
@@ -49,7 +50,8 @@ st.header(f"EaseCHAOS")
 col1, col2 = st.columns(2)
 
 with col1:
-    classes = ('EL 1', 'EL 2', 'EL 3', 'CE 1', 'CE2')
+    classes = ['EL 1', 'EL 2', 'EL 3', 'CE 1', 'CE2']
+    classes = [''] + classes
     class_option = st.selectbox('Pick Class', classes,) 
       
 
@@ -66,7 +68,8 @@ with col2:
     with col4:
         not_upload = st.checkbox('Extract Class Timetable')
         if not_upload:
-            drafts = ('Draft 1', 'Draft 2', 'Draft 3')
+            drafts = ['Draft 1', 'Draft 2', 'Draft 3']
+            drafts = [''] + drafts
             draft_option = st.selectbox('Pick Draft', drafts)
 
             if class_option and draft_option:
@@ -81,13 +84,13 @@ with col2:
                 st.markdown(href, unsafe_allow_html=True)
             else:
                 pass
-                
-if class_option and draft_option:
-    st.dataframe(table)
-else:
+            
+try:                
+    if class_option and draft_option:
+        st.dataframe(table)
+except NameError:
     pass
 
     
 with st.expander('About'):
     st.write('about here')
-
