@@ -2,7 +2,7 @@
 
 The project uses pandas for data manipulation and Streamlit for deployment. It allows users to input their class schedules, and it outputs a personalized timetable for each class. The project is in its early stages, and we're actively working on adding new features and improving the existing ones.
 
-## **HOW TO CONTRIBUTE**
+## HOW TO CONTRIBUTE
 
 We welcome contributions from everyone. Here's how you can contribute:
 
@@ -14,9 +14,9 @@ We welcome contributions from everyone. Here's how you can contribute:
 
 This project exists thanks to all the people who contribute. Here's the list of contributors:
 
-* [Ontonyin Aaron](github)
-* [Contributor 2](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html "LINK_TO_PROFILE")
-* [Contributor 3](vscode-file://vscode-app/Applications/Visual%20Studio%20Code.app/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html "LINK_TO_PROFILE")
+* [Ontonyin Aaron](https://github.com/aaron-ontonyin)
+* [Neil Ohene](https://github.com/dvc-77)
+* [Dompeh Bright](https://github.com/db-keli)
 
 ## Future Work
 

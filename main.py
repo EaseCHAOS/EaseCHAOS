@@ -61,10 +61,10 @@ with file_col:
     else:
         existing_drafts = os.listdir('existing_drafts')
         raw_file = st.selectbox('Pick a general timetable', existing_drafts)
-        raw_file = 'existing_drafts/' + raw_file
+        raw_file = os.path.join('existing_drafts', raw_file)
 
 with class_col:
-    programs = ['Choose a program', 'EL', 'CE', 'RP', 'ME', 'MA', 'PG', 'NG', 'LT', 'LA', 'MC','SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES', 'PE', 'IS', 'CH', 'EC']
+    programs = ['Choose a program', 'EL', 'CE', 'RP', 'ME', 'MA', 'PG', 'NG', 'LT', 'LA', 'MC','SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES', 'PE', 'IS', 'CH', 'MR']
     levels = ['Choose a level', '100', '200', '300', '400']
 
     program_col, level_col = st.columns(2)
