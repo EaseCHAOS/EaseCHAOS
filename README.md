@@ -14,9 +14,9 @@ We welcome contributions from everyone. Here's how you can contribute:
 
 This project exists thanks to all the people who contribute. Here's the list of contributors:
 
-* [Ontonyin Aaron](github.com/Aaron-Ontonyin)
-* [Neil Ohene](github.com/dvc-77)
-* [Dompeh Bright](github.com/db-keli)
+* [Ontonyin Aaron](https://github.com/db-keli)
+* [Neil Ohene](https://github.com/dvc-77)
+* [Dompeh Bright](https://github.com/aaron-ontonyin)
 
 ## Future Work
 
