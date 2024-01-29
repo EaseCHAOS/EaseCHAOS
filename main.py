@@ -85,16 +85,16 @@ if raw_file is None:
 
 class_to_extract_for = program + ' ' + level[0]
 try:
-    with st.spinner('Extracting time table...'):
-        table = catched_get_table(raw_file, class_to_extract_for)
-        table_in_memory = io.BytesIO()
+    table = catched_get_table(raw_file, class_to_extract_for)
+    table_in_memory = io.BytesIO()
 
-        st.title(f"{class_to_extract_for} time table")
-        if streamlit_js_eval(js_expressions='screen.width', key = 'SCR') > 768:
-            html_table = table.to_html().replace("\\n","<br>").replace("NaN", "")
-            st.write(html_table, unsafe_allow_html=True)
-        else:
-            st.dataframe(table)
+    st.title(f"{class_to_extract_for} time table")
+    screen_width = streamlit_js_eval(js_expressions='screen.width', key = 'SCR')
+    if screen_width is not None and screen_width > 768:
+        html_table = table.to_html().replace("\\n","<br>").replace("NaN", "")
+        st.write(html_table, unsafe_allow_html=True)
+    else:
+        st.spinner('Extracting time table...')
 
 
     with pd.ExcelWriter(table_in_memory, engine='xlsxwriter') as writer:
