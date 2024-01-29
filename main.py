@@ -9,9 +9,10 @@ import streamlit as st
 
 from streamlit_js_eval import streamlit_js_eval
 
-@st.cache_data()
+@st.cache_data(show_spinner=False)
 def catched_get_table(*args, **kwargs):
-    return get_time_table(*args, **kwargs)
+    with st.spinner('Extracting time table...'):
+        return get_time_table(*args, **kwargs)
 
 
 st.set_page_config(layout="wide")

@@ -1,6 +1,8 @@
 import regex as re
 import pandas as pd
 
+import openpyxl
+
 
 def _get_time_row(df: pd.DataFrame) -> pd.Series:
     """Get the time row from the dataframe."""
@@ -60,10 +62,25 @@ def _get_all_daily_tables(filname: str, class_pattern: str) -> dict:
     dict
         A dictionary of the daily tables for each class.
     """
-    sheets = pd.ExcelFile(filname)
-    dfs = pd.read_excel(sheets, sheet_name=sheets.sheet_names)
+    workbook = openpyxl.load_workbook(filname)
+    dfs = {}
+    for sheet in workbook.sheetnames:
+        merged_cells = workbook[sheet].merged_cells.ranges
+        for mc in merged_cells.copy():
+            if mc.max_col - mc.min_col == 1:
+                merged_value = workbook[sheet].cell(mc.min_row, mc.min_col).value
+                workbook[sheet].unmerge_cells(mc.coord)
+                workbook[sheet].cell(mc.min_row, mc.min_col).value = merged_value
+                workbook[sheet].cell(mc.max_row, mc.max_col).value = merged_value
 
-    return {sheet: _get_daily_table(dfs[sheet], class_pattern) for sheet in sheets.sheet_names}
+        data = workbook[sheet].values
+        header = next(data)
+        df = pd.DataFrame(data, columns=header)
+        df = df.dropna(axis=1, how="all")
+
+        dfs[sheet] = _get_daily_table(df, class_pattern)
+
+    return dfs
 
 
 def get_time_table(filname: str, class_pattern: str) -> pd.DataFrame:
