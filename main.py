@@ -95,6 +95,7 @@ try:
         st.write(html_table, unsafe_allow_html=True)
     else:
         st.spinner('Extracting time table...')
+        st.dataframe(table)
 
 
     with pd.ExcelWriter(table_in_memory, engine='xlsxwriter') as writer:
