@@ -64,7 +64,7 @@ with file_col:
         raw_file = os.path.join('existing_drafts', raw_file)
 
 with class_col:
-    programs = ['Choose a program', 'EL', 'CE', 'RP', 'ME', 'MA', 'PG', 'NG', 'LT', 'LA', 'MC','SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES', 'PE', 'IS', 'CH', 'MR']
+    programs = ['Choose a program', 'EL', 'CE', 'RP', 'ME', 'MA', 'PG', 'NG', 'LT', 'LA', 'MC','SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES', 'PE', 'IS', 'CH', 'MR', 'EC']
     levels = ['Choose a level', '100', '200', '300', '400']
 
     program_col, level_col = st.columns(2)
