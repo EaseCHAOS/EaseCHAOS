@@ -5,7 +5,19 @@ import openpyxl
 
 
 def _get_time_row(df: pd.DataFrame) -> pd.Series:
-    """Get the time row from the dataframe."""
+    """
+    Get the time row from the dataframe.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The dataframe to get the time row from.
+
+    Returns
+    -------
+    pandas.Series
+        The time row from the dataframe.
+    """
     for row in df.iterrows():
         if re.match(r"^\d{1,2}:\d{1,2}-\d{1,2}:\d{1,2}$", str(row[1].iloc[1])):
             return row
@@ -46,13 +58,13 @@ def _get_daily_table(df: pd.DataFrame, class_pattern: str) -> pd.DataFrame:
     return df
 
 
-def _get_all_daily_tables(filname: str, class_pattern: str) -> dict:
+def _get_all_daily_tables(filename: str, class_pattern: str) -> dict:
     """
     Get all the daily tables from an excel file.
 
     Parameters
     ----------
-    filname : str
+    filename : str
         The filename of the excel file to get the daily tables from.
     class_pattern : str
         The class to get the daily tables or. E.g. 'EL 3'
@@ -62,7 +74,7 @@ def _get_all_daily_tables(filname: str, class_pattern: str) -> dict:
     dict
         A dictionary of the daily tables for each class.
     """
-    workbook = openpyxl.load_workbook(filname)
+    workbook = openpyxl.load_workbook(filename)
     dfs = {}
     for sheet in workbook.sheetnames:
         merged_cells = workbook[sheet].merged_cells.ranges
@@ -83,13 +95,13 @@ def _get_all_daily_tables(filname: str, class_pattern: str) -> dict:
     return dfs
 
 
-def get_time_table(filname: str, class_pattern: str) -> pd.DataFrame:
+def get_time_table(filename: str, class_pattern: str) -> pd.DataFrame:
     """
     Get the complete time table for a particular class for all days.
 
     Parameters
     ----------
-    filname : str
+    filename : str
         The filename of the excel file. This file contains every class with the days as the sheet names. 
     class_pattern : str
         The class to get the complete time table for. E.g. 'EL 3'
@@ -99,7 +111,7 @@ def get_time_table(filname: str, class_pattern: str) -> pd.DataFrame:
     pandas.DataFrame
         The complete time table for the given class.
     """
-    daily_tables = _get_all_daily_tables(filname, class_pattern)
+    daily_tables = _get_all_daily_tables(filename, class_pattern)
 
     
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
