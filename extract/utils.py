@@ -1,18 +1,6 @@
 import pandas as pd
 
-
 def save_to_excel(df: pd.DataFrame, filename: str) -> None:
-    """
-    Save the dataframe to an excel file.
-
-    Parameters
-    ----------
-    df : pandas.DataFrame
-        The dataframe to save.
-    filename : str
-        The filename to save the dataframe to.
-    """
-
     writer = pd.ExcelWriter(filename, engine="xlsxwriter")
     df.to_excel(writer, index=True, sheet_name="Sheet1")
 
@@ -24,13 +12,13 @@ def save_to_excel(df: pd.DataFrame, filename: str) -> None:
 
     worksheet.set_column("A:XFD", 30, wrap_format)
 
-    
     for row in range(df.shape[0]):
         worksheet.set_row(row, 60)
 
+        row_values = df.iloc[row].astype(str).str.strip().tolist()
         for col in range(df.shape[1] - 1):  # -1 is moved here to avoid checking inside the loop
-            cell_value = str(df.iloc[row, col]).strip()
-            next_cell_value = str(df.iloc[row, col + 1]).strip()
+            cell_value = row_values[col]
+            next_cell_value = row_values[col + 1]
 
             if cell_value == next_cell_value and cell_value != "nan":
                 worksheet.merge_range(

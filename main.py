@@ -4,6 +4,8 @@ import base64
 
 import pandas as pd
 
+import pyarrow as pa
+
 from extract.extract_table import get_time_table
 import streamlit as st
 
@@ -49,19 +51,13 @@ hide_streamlit_style = """
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-#st.header(f"EaseCHAOS")
-
-upload_source = st.toggle('Upload a general timetable')
 
 file_col, class_col = st.columns((2, 3))
 
 with file_col:
-    if upload_source:
-        raw_file = st.file_uploader("Upload a general timetable", type=['xlsx'])
-    else:
-        existing_drafts = os.listdir('existing_drafts')
-        raw_file = st.selectbox('Pick a general timetable', existing_drafts)
-        raw_file = os.path.join('existing_drafts', raw_file)
+    existing_drafts = os.listdir('existing_drafts')
+    raw_file = st.selectbox('Pick a general timetable', existing_drafts)
+    raw_file = os.path.join('existing_drafts', raw_file)
 
 with class_col:
     programs = ['Choose a program', 'EL', 'CE', 'RP', 'ME', 'MA', 'PG', 'NG', 'LT', 'LA', 'MC','SD', 'CY', 'MN', 'RN', 'GM', 'GL', 'ES', 'PE', 'IS', 'CH', 'MR', 'EC']
@@ -97,6 +93,7 @@ try:
         st.spinner('Extracting time table...')
         st.dataframe(table)
 
+    
 
     with pd.ExcelWriter(table_in_memory, engine='xlsxwriter') as writer:
         workbook = writer.book
@@ -136,8 +133,6 @@ try:
 
 except Exception as e:
     st.error(f"An error occurred: {e}")
-    if upload_source:
-        st.info('Please be sure the uploaded file is a valid excel file in the format of the general timetable! \n Contact the developers if the error persist.')
     st.stop()
     
 with st.expander('About'):
