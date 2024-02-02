@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter
-from api.timetable import router as timetable_router
+from api.routes.timetable import router as timetable_router
 
 app = FastAPI()
 
