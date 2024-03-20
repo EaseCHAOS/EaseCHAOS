@@ -34,7 +34,7 @@ def _get_daily_table(df: pd.DataFrame, class_pattern: str) -> pd.DataFrame:
         It's a general time table on a single day for all classes.
     class_pattern : str
         The class to search for. E.g. 'EL 3'
-
+o
     Returns
     -------
     pandas.DataFrame

@@ -93,7 +93,6 @@ try:
         st.spinner('Extracting time table...')
         st.dataframe(table)
 
-    
 
     with pd.ExcelWriter(table_in_memory, engine='xlsxwriter') as writer:
         workbook = writer.book
@@ -101,11 +100,26 @@ try:
             workbook.add_worksheet(class_to_extract_for)
         worksheet = writer.sheets[class_to_extract_for]
 
-        wrap_format = workbook.add_format({'text_wrap': True, 'align': 'center'})
-        worksheet.set_column('A:XFD', 30, wrap_format)
+        format = workbook.add_format({ 'border': 1, 'text_wrap': True, 'align': 'center', 'valign': 'vcenter', 'font_size': 12, 'font': 'Monaco'})
+        header_format = workbook.add_format({'bold': True, 'align': 'center', 'valign': 'vcenter', 'font_size': 14, 'border': 1, 'font': 'Monaco'})
+        no_border_format = workbook.add_format()  
 
+        # Apply the no_border_format to the entire worksheet
+        worksheet.set_column('A:P', 44, no_border_format)
+
+        # Write the column headers with the header_format
+        for col_num, value in enumerate(table.columns.values):
+            worksheet.write(0, col_num + 1, value, header_format)
+        worksheet.write(0, 0, table.index.name, header_format)  # Write the name of the index
+
+        # Write the row headers with the header_format
+        for row_num, value in enumerate(table.index.values):
+            worksheet.write(row_num + 1, 0, value, header_format)  # Write the values of the index
+
+        # Write the DataFrame to the Excel file
         for row in range(table.shape[0]):
-            worksheet.set_row(row, 60)
+            # Increase the height of the rows
+            worksheet.set_row(row + 1, 75, format)
 
             for col in range(table.shape[1] - 1):  # -1 is moved here to avoid checking inside the loop
                 cell_value = str(table.iloc[row, col]).strip()
@@ -118,11 +132,93 @@ try:
                         row + 1,
                         col + 2,
                         cell_value,
-                        wrap_format,
+                        format,
                     )
-        worksheet.set_row(table.shape[0], 65)
+                elif cell_value != "nan":
+                    worksheet.write(row + 1, col + 1, cell_value, format)
 
-        table.to_excel(writer, index=True, header=True, sheet_name=class_to_extract_for)
+            # Handle the last column separately
+            last_col_value = str(table.iloc[row, table.shape[1] - 1]).strip()
+            if last_col_value != "nan":
+                worksheet.write(row + 1, table.shape[1], last_col_value, format)
+
+        # Write the DataFrame to the Excel file without the headers and index
+        table.to_excel(writer, startrow=1, startcol=1, index=False, header=False, sheet_name=class_to_extract_for)
+   
+   
+    # with pd.ExcelWriter(table_in_memory, engine='xlsxwriter') as writer:
+    #     workbook = writer.book
+    #     if class_to_extract_for not in workbook.sheetnames:
+    #         workbook.add_worksheet(class_to_extract_for)
+    #     worksheet = writer.sheets[class_to_extract_for]
+
+    #     wrap_format = workbook.add_format({'text_wrap': True, 'align': 'center', 'valign': 'vcenter', 'font_size': 13})
+    #     header_format = workbook.add_format({'bold': True, 'align': 'center', 'valign': 'vcenter', 'font_size': 14, 'border': 1})
+
+    #     # Increase the width of the columns and apply the wrap_format
+    #     worksheet.set_column('A:P', 44, wrap_format)
+
+    #     # Write the column headers with the header_format
+    #     for col_num, value in enumerate(table.columns.values):
+    #         worksheet.write(0, col_num + 1, value, header_format)
+    #     worksheet.write(0, 0, table.index.name, header_format)  # Write the name of the index
+
+    #     # Write the row headers with the header_format
+    #     for row_num, value in enumerate(table.index.values):
+    #         worksheet.write(row_num + 1, 0, value, header_format)  # Write the values of the index
+
+    #     # Write the DataFrame to the Excel file
+    #     for row in range(table.shape[0]):
+    #         # Increase the height of the rows
+    #         worksheet.set_row(row + 1, 70, wrap_format)
+
+    #         for col in range(table.shape[1] - 1):  # -1 is moved here to avoid checking inside the loop
+    #             cell_value = str(table.iloc[row, col]).strip()
+    #             next_cell_value = str(table.iloc[row, col + 1]).strip()
+
+    #             if cell_value == next_cell_value and cell_value != "nan":
+    #                 worksheet.merge_range(
+    #                     row + 1,
+    #                     col + 1,
+    #                     row + 1,
+    #                     col + 2,
+    #                     cell_value,
+    #                     wrap_format,
+    #                 )
+    #     # Increase the height of the last row
+    #     worksheet.set_row(table.shape[0] + 1, 75, wrap_format)
+
+    #     # Write the DataFrame to the Excel file without the headers and index
+    #     table.to_excel(writer, startrow=1, startcol=1, index=False, header=False, sheet_name=class_to_extract_for)
+
+    # with pd.ExcelWriter(table_in_memory, engine='xlsxwriter') as writer:
+    #     workbook = writer.book
+    #     if class_to_extract_for not in workbook.sheetnames:
+    #         workbook.add_worksheet(class_to_extract_for)
+    #     worksheet = writer.sheets[class_to_extract_for]
+
+    #     wrap_format = workbook.add_format({'text_wrap': True, 'align': 'center'})
+    #     worksheet.set_column('A:XFD', 40, wrap_format)
+
+    #     for row in range(table.shape[0]):
+    #         worksheet.set_row(row, 60)
+
+    #         for col in range(table.shape[1] - 1):  # -1 is moved here to avoid checking inside the loop
+    #             cell_value = str(table.iloc[row, col]).strip()
+    #             next_cell_value = str(table.iloc[row, col + 1]).strip()
+
+    #             if cell_value == next_cell_value and cell_value != "nan":
+    #                 worksheet.merge_range(
+    #                     row + 1,
+    #                     col + 1,
+    #                     row + 1,
+    #                     col + 2,
+    #                     cell_value,
+    #                     wrap_format,
+    #                 )
+    #     worksheet.set_row(table.shape[0], 65)
+
+    #     table.to_excel(writer, index=True, header=True, sheet_name=class_to_extract_for)
 
     
 
