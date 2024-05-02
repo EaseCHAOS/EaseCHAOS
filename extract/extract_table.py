@@ -2,7 +2,8 @@ import regex as re
 import pandas as pd
 
 import openpyxl
-
+from icalendar import Calendar, Event
+from datetime import datetime, timedelta
 
 def _get_time_row(df: pd.DataFrame) -> pd.Series:
     """
@@ -138,3 +139,30 @@ def get_time_table(filename: str, class_pattern: str) -> pd.DataFrame:
                 final_df.loc[day, period] = available_classes
 
     return final_df
+
+def generate_calendar(csv_file, start_date, end_date):
+    df = pd.read_csv(csv_file, index_col=0)
+    # I plan to add am/pm to the timestamp columns of the df here so i can include %p later
+    cal = Calendar()
+
+    start_date = datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.strptime(end_date, '%Y-%m-%d')
+
+    current_date = start_date
+    while current_date <= end_date:
+        day_name = current_date.strftime('%A')
+        if day_name in df.index: #index is same as the day names
+            class_schedule = df.loc[day_name].dropna()
+            for time_slot, class_info in class_schedule.items():
+                start_time, end_time = [datetime.strptime(t, '%H:%M') for t in time_slot.split('-')] # took the %p from this side
+                class_info_parts = class_info.split(',')
+                class_name = class_info_parts[0].strip()
+                location = ', '.join(class_info_parts[1:]).strip()
+                event = Event()
+                event.add('summary', f'{class_name} - {location}')
+                event.add('dtstart', current_date.replace(hour=start_time.hour, minute=start_time.minute))
+                event.add('dtend', current_date.replace(hour=end_time.hour, minute=end_time.minute))
+                cal.add_component(event)
+        current_date += timedelta(days=1)
+    with open('class_schedule.ics', 'wb') as f:
+        f.write(cal.to_ical())
