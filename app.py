@@ -5,9 +5,9 @@ app = FastAPI()
 
 app_router = APIRouter(prefix="/api/v1")
 
-@app_router.get("/")
+@app.get("/api/v1")
 def root():
     return {"Hello": "World"}
 
-app.include_router(app_router)
+app.include_router(router=app_router)
 app.include_router(timetable_router, prefix="/api/v1")
